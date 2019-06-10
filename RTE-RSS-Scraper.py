@@ -5,6 +5,7 @@ import mysql.connector
 from bs4 import BeautifulSoup
 # from csv import writer
 from fuzzywuzzy import fuzz, process
+
 import csv
 
 
@@ -18,33 +19,19 @@ mydb = mysql.connector.connect(
 rssRTEBusinessNews = 'https://www.rte.ie/feeds/rss/?index=/news/business/'
 
 rssIrishTimes = 'https://www.irishtimes.com/cmlink/news-1.1319192'
+rssHackerNews = 'https://news.ycombinator.com/rss'
 
 # print(rssRTEBusinessNews)
 
 
-def getRTENews(rssRTE):
-    req = requests.get(rssRTE)
+
+
+def getXMLNews(urlLink):
+    req = requests.get(urlLink)
     if req.status_code == 200:
         print("Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         soup = BeautifulSoup(req.text, 'html.parser')
         return soup
-    elif req.status_code == 404:
-        print("URL Not Found!")
-        return None
-    else:
-        print("A Problem occurred")
-        return None
-
-
-def getIrishTimesNews(rssIrishTimes):
-    req = requests.get(rssIrishTimes)
-    if req.status_code == 200:
-        print("Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        soup = BeautifulSoup(req.text, 'html.parser')
-        return soup
-    elif req.status_code == 404:
-        print("URL Not Found!")
-        return None
     else:
         print("A Problem occurred")
         return None
@@ -67,8 +54,40 @@ def fetchContactsData():
     return contactsQueryData
 
 
-listRTE = getRTENews(rssRTEBusinessNews)
-listIrishTimes = getIrishTimesNews(rssIrishTimes)
+def printNewsItems(newsObject):
+    for item in newsObject.findAll('item'):
+        print("AD")
+        # print(item)
+        print(item.category.get_text())
+        print(item.title.get_text())
+        print(item.description.get_text())
+        print(item.guid.get_text())
+        thumb = item.find("media:content")
+        print(thumb)
+        print(thumb["url"])
+
+def printITNewsItems(newsObject):
+    for item in newsObject.findAll('item'):
+        print("AD")
+        print(item)
+        # print(item.category.get_text())
+        print(item.title.get_text())
+        print(item.description.get_text())
+        print(item.guid.get_text())
+        print("Link is :::: " + item.link.get_text())
+        thumb = item.get("link")
+        print("thumb :::: ")
+        print(thumb)
+        # print(thumb["url"])
+
+
+# listRTE = getRTENews(rssRTEBusinessNews)
+listRTE = getXMLNews(rssRTEBusinessNews)
+listIrishTimes = getXMLNews(rssIrishTimes)
+
+printNewsItems(listRTE)
+
+printITNewsItems(listIrishTimes)
 
 if listRTE == None:
     print("Nothing returned in RTE!!")
