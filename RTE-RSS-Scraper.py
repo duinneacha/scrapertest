@@ -69,15 +69,16 @@ def printNewsItems(newsObject):
 def printITNewsItems(newsObject):
     for item in newsObject.findAll('item'):
         print("AD")
-        print(item)
+        print(item.prettify())
         # print(item.category.get_text())
         print(item.title.get_text())
         print(item.description.get_text())
         print(item.guid.get_text())
-        print("Link is :::: " + item.link.get_text())
-        thumb = item.get("link")
-        print("thumb :::: ")
-        print(thumb)
+        
+        
+        link = item.find('link').next_element
+
+        print("link is : " + link)
         # print(thumb["url"])
 
 
