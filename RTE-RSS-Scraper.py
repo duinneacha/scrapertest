@@ -20,7 +20,7 @@ rssRTEBusinessNews = 'https://www.rte.ie/feeds/rss/?index=/news/business/'
 
 rssIrishTimes = 'https://www.irishtimes.com/cmlink/news-1.1319192'
 rssHackerNews = 'https://news.ycombinator.com/rss'
-
+# https://news.google.com/rss?hl=en-IE&gl=IE&ceid=IE:en
 # print(rssRTEBusinessNews)
 
 
