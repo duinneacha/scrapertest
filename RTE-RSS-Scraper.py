@@ -27,6 +27,7 @@ rssGoogleNews = 'https://news.google.com/rss?hl=en-IE&gl=IE&ceid=IE:en'
 
 
 def getXMLNews(urlLink):
+        # """ In getXMS News - this takes the url  link and returns the page as an object """
     req = requests.get(urlLink)
     if req.status_code == 200:
         print("Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -81,6 +82,9 @@ def printITNewsItems(newsObject):
         print("link is : " + link)
         # print(thumb["url"])
 
+def get_matches(query, choices, limit=3):
+    results = process.extract(query, choices, limit=limit)
+    return results
 
 def printGoogleNewsItems(newsObject):
     for item in newsObject.findAll('item'):
@@ -98,12 +102,28 @@ def printGoogleNewsItems(newsObject):
 
 
 def cleaned(newsHeader):
-    cleanedItem = newsHeader.lstrip('Ireland')
-    print("Cleaning . . . .")
-    print("News Header:   ", newsHeader)
-    print("Cleaned Item:  ", cleanedItem)
+    cleanedItem_A = newsHeader.replace('Ireland', '')
+    cleanedItem_B = cleanedItem_A.replace('Limited', '')
+    cleanedItem_C = cleanedItem_B.replace('LIMITED', '')
+    cleanedItem_D = cleanedItem_C.replace('Ltd', '')
+    cleanedItem_E = cleanedItem_D.replace('Ltd.', '')
+    cleanedItem_F = cleanedItem_E.replace('limited', '')
+    cleanedItem_G = cleanedItem_F.replace('ltd', '')
+    cleanedItem_H = cleanedItem_G.replace('Irish', '')
 
-    return cleanedItem
+    # for r in (("Limited", ""), ("LIMITED", ""), ("ltd", ""),("Ltd.",""), ("Ltd","")):
+    #     cleanedItem = newsHeader.replace(*r)
+
+#     cleanedItem = newsHeader.replace('Ltd', '')
+#     cleanedItem = newsHeader.replace('ltd', '')
+
+
+
+    # print("Cleaning . . . .")
+    # print("Contact Name:   ", newsHeader)
+    # print("Cleaned Name:   ", cleanedItem_G)
+
+    return cleanedItem_H
 
 
 def matchNewsItems(newsList):
@@ -131,34 +151,35 @@ def matchNewsItems(newsList):
             fuzzMatch = fuzz.partial_ratio(newsHeader, cleaned(contactInLoop))
             # fuzzMatch = fuzz.WRatio(contact, newsHeader)
             # fuzzMatch = fuzz.token_sort_ratio(contact, newsHeader)
-            if fuzzMatch > 50:
+            if fuzzMatch > 70:
                 print(fuzzMatch)
                 print(newsHeader)
                 print(contact)
 
 
-# listRTE = getRTENews(rssRTEBusinessNews)
+
 listRTE = getXMLNews(rssRTEBusNews)
-listIrishTimes = getXMLNews(rssIrishTimes)
-listGoogleNews = getXMLNews(rssGoogleNews)
+# listIrishTimes = getXMLNews(rssIrishTimes)
+# listGoogleNews = getXMLNews(rssGoogleNews)
 
 printNewsItems(listRTE)
-
-printITNewsItems(listIrishTimes)
-
+# printITNewsItems(listIrishTimes)
 # printGoogleNewsItems(listGoogleNews)
 
 if listRTE == None:
     print("Nothing returned in RTE!!")
 
-# soup = BeautifulSoup(response.text, 'xml')
 
 
 contactsQueryData = fetchContactsData()
 
 matchNewsItems(listRTE)
-matchNewsItems(listIrishTimes)
-matchNewsItems(listGoogleNews)
+# matchNewsItems(listIrishTimes)
+# matchNewsItems(listGoogleNews)
+
+
+
+
 # print(soup)
 
 # for (num, item) in enumerate(soup.contents):
