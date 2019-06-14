@@ -20,6 +20,7 @@ mydb = mysql.connector.connect(
 # RSS Feeds
 rssRTEBusNews = 'https://www.rte.ie/feeds/rss/?index=/news/business/'
 rssIrishTimes = 'https://www.irishtimes.com/cmlink/news-1.1319192'
+rssITBusinessNews = 'https://www.irishtimes.com/rss/activecampaign-business-today-digest-more-from-business-1.3180340'
 rssHackerNews = 'https://news.ycombinator.com/rss'
 rssGoogleNews = 'https://news.google.com/rss?hl=en-IE&gl=IE&ceid=IE:en'
 
@@ -57,15 +58,15 @@ def fetchContactsData():
 
 def printNewsItems(newsObject):
     for item in newsObject.findAll('item'):
-        print("In RTE News")
+        # print("In RTE News")
         # print(item)
-        print(item.category.get_text())
-        print(item.title.get_text())
-        print(item.description.get_text())
-        print(item.guid.get_text())
+        # print(item.category.get_text())
+        print(" - " + item.title.get_text())
+        # print(item.description.get_text())
+        # print(item.guid.get_text())
         thumb = item.find("media:content")
-        print(thumb)
-        print(thumb["url"])
+        # print(thumb)
+        # print(thumb["url"])
 
 
 def printITNewsItems(newsObject):
@@ -131,39 +132,34 @@ def matchNewsItems(newsList):
         newsHeader = item.title.get_text()
 
         for contact in contactsQueryData:
-            # print(item.title.get_text())
-            # print(contact)
-            # contactInLoop = ",".join(contact)
 
+            # Field needs to be converted to string from tuple
             contactInLoop = ''
 
             map_str = map(str, contact)
 
-            # for s in contact:
-            #     contactInLoop += s
+
             contactInLoop = ''.join(map_str)
 
-            # print("contactInLoop", contact)
-            # print("contactInLoop", contact)
-            # print("contactInLoop", contactInLoop)
-            # print("contactInLoop", contactInLoop)
-
             fuzzMatch = fuzz.partial_ratio(newsHeader, cleaned(contactInLoop))
-            # fuzzMatch = fuzz.WRatio(contact, newsHeader)
-            # fuzzMatch = fuzz.token_sort_ratio(contact, newsHeader)
-            if fuzzMatch > 70:
-                print(fuzzMatch)
+
+            # In some cases Contact equals None
+            # Determine score of relevance
+            if fuzzMatch > 70 and cleaned(contactInLoop) != 'None':
                 print(newsHeader)
-                print(contact)
+                print(cleaned(contactInLoop))
+                print("The score of fuzzywuzzy is " + str(fuzzMatch))
+                
+                
 
 
 
 listRTE = getXMLNews(rssRTEBusNews)
-# listIrishTimes = getXMLNews(rssIrishTimes)
+listIrishTimes = getXMLNews(rssIrishTimes)
 # listGoogleNews = getXMLNews(rssGoogleNews)
 
 printNewsItems(listRTE)
-# printITNewsItems(listIrishTimes)
+printITNewsItems(listIrishTimes)
 # printGoogleNewsItems(listGoogleNews)
 
 if listRTE == None:
@@ -174,7 +170,7 @@ if listRTE == None:
 contactsQueryData = fetchContactsData()
 
 matchNewsItems(listRTE)
-# matchNewsItems(listIrishTimes)
+matchNewsItems(listIrishTimes)
 # matchNewsItems(listGoogleNews)
 
 
