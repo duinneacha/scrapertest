@@ -8,6 +8,7 @@ from fuzzywuzzy import fuzz, process
 
 import csv
 
+print(dir(fuzz))
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -83,9 +84,11 @@ def printITNewsItems(newsObject):
         print("link is : " + link)
         # print(thumb["url"])
 
+
 def get_matches(query, choices, limit=3):
     results = process.extract(query, choices, limit=limit)
     return results
+
 
 def printGoogleNewsItems(newsObject):
     for item in newsObject.findAll('item'):
@@ -102,8 +105,10 @@ def printGoogleNewsItems(newsObject):
         # print(thumb["url"])
 
 
-def cleaned(newsHeader):
-    cleanedItem_A = newsHeader.replace('Ireland', '')
+def cleaned(currentContact):
+    """Clean the Contact of common words to increase the acuracy of the fuzzy search"""
+
+    cleanedItem_A = currentContact.replace('Ireland', '')
     cleanedItem_B = cleanedItem_A.replace('Limited', '')
     cleanedItem_C = cleanedItem_B.replace('LIMITED', '')
     cleanedItem_D = cleanedItem_C.replace('Ltd', '')
@@ -117,8 +122,6 @@ def cleaned(newsHeader):
 
 #     cleanedItem = newsHeader.replace('Ltd', '')
 #     cleanedItem = newsHeader.replace('ltd', '')
-
-
 
     # print("Cleaning . . . .")
     # print("Contact Name:   ", newsHeader)
@@ -138,10 +141,12 @@ def matchNewsItems(newsList):
 
             map_str = map(str, contact)
 
-
             contactInLoop = ''.join(map_str)
 
-            fuzzMatch = fuzz.partial_ratio(newsHeader, cleaned(contactInLoop))
+            # fuzzMatch = fuzz.partial_ratio(newsHeader, cleaned(contactInLoop))
+
+            fuzzMatch = fuzz.token_set_ratio(
+                newsHeader, cleaned(contactInLoop))
 
             # In some cases Contact equals None
             # Determine score of relevance
@@ -149,9 +154,6 @@ def matchNewsItems(newsList):
                 print(newsHeader)
                 print(cleaned(contactInLoop))
                 print("The score of fuzzywuzzy is " + str(fuzzMatch))
-                
-                
-
 
 
 listRTE = getXMLNews(rssRTEBusNews)
@@ -166,14 +168,11 @@ if listRTE == None:
     print("Nothing returned in RTE!!")
 
 
-
 contactsQueryData = fetchContactsData()
 
 matchNewsItems(listRTE)
 matchNewsItems(listIrishTimes)
 # matchNewsItems(listGoogleNews)
-
-
 
 
 # print(soup)
