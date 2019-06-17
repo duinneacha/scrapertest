@@ -27,6 +27,7 @@ rssITBusinessNews = 'https://www.irishtimes.com/rss/activecampaign-business-toda
 rssHackerNews = 'https://news.ycombinator.com/rss'
 rssGoogleNews = 'https://news.google.com/rss?hl=en-IE&gl=IE&ceid=IE:en'
 rssSiliconRepublicNews = 'https://www.siliconrepublic.com/feed'
+rssIndependantNews = 'https://www.independent.ie/business/irish/rss/'
 webITBusinessNews = 'https://www.irishtimes.com/business/companies'
 
 # This will return a BeautifulSoup object from a specified RSS news feed URL
@@ -34,7 +35,7 @@ webITBusinessNews = 'https://www.irishtimes.com/business/companies'
 
 def getXMLNews(urlLink):
     """ In getXMS News - this takes the url link and returns the page as an object """
-    
+
     req = requests.get(urlLink)
     if req.status_code == 200:
         print("Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -89,6 +90,7 @@ def printITNewsItems(newsObject):
         print("link is : " + link)
         # print(thumb["url"])
 
+
 def printStandardNewsItems(newsObject):
     """ This appears to be a standard format across many rss feed sites"""
     for item in newsObject.findAll('item'):
@@ -97,7 +99,6 @@ def printStandardNewsItems(newsObject):
         newsLink = item.guid.get_text()
         newsMediaThumbnailLink = item.find("media:thumbnail")["url"]
         newsPublishDate = item.pubdate.get_text()
-        
 
         print("Title: " + newsTitle)
         print("Link:  " + newsLink)
@@ -105,13 +106,33 @@ def printStandardNewsItems(newsObject):
         print("Date:  " + newsPublishDate)
         print("")
 
+        # link = item.find('link').next_element
 
+        # print("link is : " + link)
+        # print(thumb["url"])
+
+
+def printIndependantNewsItems(newsObject):
+    """ Independant.ie business RSS news parser"""
+    for item in newsObject.findAll('item'):
+
+        newsTitle = item.title.get_text()
+        newsLink = item.link.get_text()
+        newsMediaThumbnailLink = item.find("enclosure")["url"]
+        # newsMediaThumbnailLink = item.link.get_text()
+        newsPublishDate = item.pubdate.get_text()
+
+        print("Title: " + newsTitle)
+        print("Link:  " + newsLink)
+        print("Pic:   " + newsMediaThumbnailLink)
+        print("Date:  " + newsPublishDate)
+        print("")
 
         # link = item.find('link').next_element
 
         # print("link is : " + link)
         # print(thumb["url"])
- 
+
 
 def get_matches(query, choices, limit=3):
     results = process.extract(query, choices, limit=limit)
@@ -188,9 +209,6 @@ def matchNewsItems(newsList):
                 print("The score of fuzzywuzzy is " + str(fuzzMatch))
 
 
-
-
-
 # def main_function():
 """ Build Lists, Parse Lists, Get Contacts, Match Contacts """
 
@@ -200,26 +218,29 @@ def matchNewsItems(newsList):
 
 
 # listGoogleNews = getXMLNews(rssGoogleNews)
-listSiliconRepublic = getXMLNews(rssSiliconRepublicNews)
+# listSiliconRepublic = getXMLNews(rssSiliconRepublicNews)
+
+listIndependant = getXMLNews(rssIndependantNews)
 
 # Parse the News Lists
 # printNewsItems(listRTE)
 # printITNewsItems(listIrishTimes)
 # printGoogleNewsItems(listGoogleNews)
-printStandardNewsItems(listSiliconRepublic)
+# printStandardNewsItems(listSiliconRepublic)
+
+printIndependantNewsItems(listIndependant)
 
 # if listRTE == None:
-    # print("Nothing returned in RTE!!")
+# print("Nothing returned in RTE!!")
 
 # Fetch the information from the Nimbus Contacts SQL Table
 contactsQueryData = fetchContactsData()
 
 
-# Match the news items against the contacts table 
+# Match the news items against the contacts table
 # matchNewsItems(listRTE)
 # matchNewsItems(listIrishTimes)
 # matchNewsItems(listGoogleNews)
-
 
 
 # listwebITBusiness = getXMLNews(webITBusinessNews)
