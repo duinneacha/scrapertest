@@ -118,12 +118,18 @@ def printIndependantNewsItems(newsObject):
 
         newsTitle = item.title.get_text()
         newsLink = item.link.get_text()
+        linkA = item.find('link').get_text()
+        linkB = item.find('link').next_element
         newsMediaThumbnailLink = item.find("enclosure")["url"]
         # newsMediaThumbnailLink = item.link.get_text()
         newsPublishDate = item.pubdate.get_text()
 
+        print(item)
         print("Title: " + newsTitle)
         print("Link:  " + newsLink)
+        print("Link A " + linkA)
+        print("Link B " + linkB)
+
         print("Pic:   " + newsMediaThumbnailLink)
         print("Date:  " + newsPublishDate)
         print("")
