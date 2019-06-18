@@ -117,19 +117,25 @@ def printIndependantNewsItems(newsObject):
     for item in newsObject.findAll('item'):
 
         newsTitle = item.title.get_text()
-        newsLink = item.link.get_text()
-        linkA = item.find('link').get_text()
-        linkB = item.find('link').next_element
-        newsMediaThumbnailLink = item.find("enclosure")["url"]
-        # newsMediaThumbnailLink = item.link.get_text()
+        newsLink = item.find('link').next_element.strip()
+
+        try:
+            newsMediaThumbnailLink = item.find("enclosure")["url"]
+        except:
+            newsMediaThumbnailLink = ""
+
+        # newsMediaThumbnailLink = ""
+
+        typeNewsMediaThumbnailLink = ""
+        # if type(item.find("enclosure")["url"]) is str:
+        #     print("Is a string")
+
         newsPublishDate = item.pubdate.get_text()
 
-        print(item)
         print("Title: " + newsTitle)
         print("Link:  " + newsLink)
-        print("Link A " + linkA)
-        print("Link B " + linkB)
-
+        # print("Type of Pic:   ")
+        # print(typeNewsMediaThumbnailLink)
         print("Pic:   " + newsMediaThumbnailLink)
         print("Date:  " + newsPublishDate)
         print("")
