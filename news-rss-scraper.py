@@ -11,6 +11,7 @@ import csv
 # print(dir(fuzz))
 
 
+
 contactsQueryData = ''
 mydb = mysql.connector.connect(
     host="localhost",
@@ -27,7 +28,7 @@ rssITBusinessNews = 'https://www.irishtimes.com/rss/activecampaign-business-toda
 rssHackerNews = 'https://news.ycombinator.com/rss'
 rssGoogleNews = 'https://news.google.com/rss?hl=en-IE&gl=IE&ceid=IE:en'
 rssSiliconRepublicNews = 'https://www.siliconrepublic.com/feed'
-rssIndependantNews = 'https://www.independent.ie/business/irish/rss/'
+rssIndependentNews = 'https://www.independent.ie/business/irish/rss/'
 webITBusinessNews = 'https://www.irishtimes.com/business/companies'
 
 # This will return a BeautifulSoup object from a specified RSS news feed URL
@@ -78,10 +79,10 @@ def printNewsItems(newsObject):
 
 def printITNewsItems(newsObject):
     for item in newsObject.findAll('item'):
-        print("In Irish Times News")
+        # print("In Irish Times News")
         print(item.prettify())
         # print(item.category.get_text())
-        print(item.title.get_text())
+        print("Title:   " + item.title.get_text())
         print(item.description.get_text())
         print(item.guid.get_text())
 
@@ -112,7 +113,7 @@ def printStandardNewsItems(newsObject):
         # print(thumb["url"])
 
 
-def printIndependantNewsItems(newsObject):
+def printIndependentNewsItems(newsObject):
     """ Independant.ie business RSS news parser"""
     for item in newsObject.findAll('item'):
 
@@ -224,30 +225,47 @@ def matchNewsItems(newsList):
 # def main_function():
 """ Build Lists, Parse Lists, Get Contacts, Match Contacts """
 
+
+
 # Build the News Lists
-# listRTE = getXMLNews(rssRTEBusNews)
-# listIrishTimes = getXMLNews(rssIrishTimes)
+# Tested
+contactsQueryData = fetchContactsData()
+
+
+# Irish Independent
+listIndependent = getXMLNews(rssIndependentNews)
+printIndependentNewsItems(listIndependent)
+matchNewsItems(listIndependent)
+
+input("Irish Independent Results - Press Enter to continue...")
+
+# RTE Business News
+listRTE = getXMLNews(rssRTEBusNews)
+printNewsItems(listRTE)
+matchNewsItems(listRTE)
+input("RTE Business News - Press Enter to continue...")
+
+
+# Irish Times
+listIrishTimes = getXMLNews(rssIrishTimes)
+printITNewsItems(listIrishTimes)
+matchNewsItems(listIrishTimes)
+input("Irish Times Business News - Press Enter to continue...")
 
 
 # listGoogleNews = getXMLNews(rssGoogleNews)
 # listSiliconRepublic = getXMLNews(rssSiliconRepublicNews)
 
-listIndependant = getXMLNews(rssIndependantNews)
 
 # Parse the News Lists
-# printNewsItems(listRTE)
-# printITNewsItems(listIrishTimes)
 # printGoogleNewsItems(listGoogleNews)
 # printStandardNewsItems(listSiliconRepublic)
 
-printIndependantNewsItems(listIndependant)
 
 # if listRTE == None:
 # print("Nothing returned in RTE!!")
 
 # Fetch the information from the Nimbus Contacts SQL Table
-contactsQueryData = fetchContactsData()
-
 
 # Match the news items against the contacts table
 # matchNewsItems(listRTE)
