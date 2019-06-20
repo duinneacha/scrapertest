@@ -11,7 +11,6 @@ import csv
 # print(dir(fuzz))
 
 
-
 contactsQueryData = ''
 mydb = mysql.connector.connect(
     host="localhost",
@@ -29,6 +28,7 @@ rssHackerNews = 'https://news.ycombinator.com/rss'
 rssGoogleNews = 'https://news.google.com/rss?hl=en-IE&gl=IE&ceid=IE:en'
 rssSiliconRepublicNews = 'https://www.siliconrepublic.com/feed'
 rssIndependentNews = 'https://www.independent.ie/business/irish/rss/'
+rssTheJournalNews = 'https://thejournal.com/rss-feeds/all-articles.aspx'
 webITBusinessNews = 'https://www.irishtimes.com/business/companies'
 
 # This will return a BeautifulSoup object from a specified RSS news feed URL
@@ -80,15 +80,32 @@ def printNewsItems(newsObject):
 def printITNewsItems(newsObject):
     for item in newsObject.findAll('item'):
         # print("In Irish Times News")
-        print(item.prettify())
-        # print(item.category.get_text())
-        print("Title:   " + item.title.get_text())
-        print(item.description.get_text())
-        print(item.guid.get_text())
 
-        link = item.find('link').next_element
+        newsTitle = item.title.get_text()
 
-        print("link is : " + link)
+        newsLink = item.find('link').next_element.strip()
+        # newsMediaThumbnailLink = item.find("media:thumbnail")["url"]
+
+        try:
+            newsMediaThumbnailLink = item.find("enclosure")["url"]
+        except:
+            newsMediaThumbnailLink = ""
+
+        newsPublishDate = item.pubdate.get_text()
+
+        print("Title: " + newsTitle)
+        print("Link:  " + newsLink)
+        print("Pic:   " + newsMediaThumbnailLink)
+        print("Date:  " + newsPublishDate)
+        print("")
+
+        # print(item.prettify())
+        # # print(item.category.get_text())
+        # print("Title:   " + item.title.get_text())
+        # print(item.description.get_text())
+        # print(item.guid.get_text())
+
+        # print("link is : " + link)
         # print(thumb["url"])
 
 
@@ -97,7 +114,7 @@ def printStandardNewsItems(newsObject):
     for item in newsObject.findAll('item'):
 
         newsTitle = item.title.get_text()
-        newsLink = item.guid.get_text()
+        newsLink = item.guid.get_text().strip()
         newsMediaThumbnailLink = item.find("media:thumbnail")["url"]
         newsPublishDate = item.pubdate.get_text()
 
@@ -226,31 +243,36 @@ def matchNewsItems(newsList):
 """ Build Lists, Parse Lists, Get Contacts, Match Contacts """
 
 
-
 # Build the News Lists
 # Tested
 contactsQueryData = fetchContactsData()
 
 
-# Irish Independent
-listIndependent = getXMLNews(rssIndependentNews)
-printIndependentNewsItems(listIndependent)
-matchNewsItems(listIndependent)
+# The Journal
+listTheJournal = getXMLNews(rssTheJournalNews)
+printIndependentNewsItems(listTheJournal)
+matchNewsItems(listTheJournal)
+input("The Journal Results - Press Enter to continue...")
 
-input("Irish Independent Results - Press Enter to continue...")
+# Irish Independent
+# listIndependent = getXMLNews(rssIndependentNews)
+# printIndependentNewsItems(listIndependent)
+# matchNewsItems(listIndependent)
+
+# input("Irish Independent Results - Press Enter to continue...")
 
 # RTE Business News
-listRTE = getXMLNews(rssRTEBusNews)
-printNewsItems(listRTE)
-matchNewsItems(listRTE)
-input("RTE Business News - Press Enter to continue...")
+# listRTE = getXMLNews(rssRTEBusNews)
+# printNewsItems(listRTE)
+# matchNewsItems(listRTE)
+# input("RTE Business News - Press Enter to continue...")
 
 
-# Irish Times
-listIrishTimes = getXMLNews(rssIrishTimes)
-printITNewsItems(listIrishTimes)
-matchNewsItems(listIrishTimes)
-input("Irish Times Business News - Press Enter to continue...")
+# # Irish Times
+# listIrishTimes = getXMLNews(rssIrishTimes)
+# printITNewsItems(listIrishTimes)
+# matchNewsItems(listIrishTimes)
+# input("Irish Times Business News - Press Enter to continue...")
 
 
 # listGoogleNews = getXMLNews(rssGoogleNews)
