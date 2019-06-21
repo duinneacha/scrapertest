@@ -29,6 +29,8 @@ rssGoogleNews = 'https://news.google.com/rss?hl=en-IE&gl=IE&ceid=IE:en'
 rssSiliconRepublicNews = 'https://www.siliconrepublic.com/feed'
 rssIndependentNews = 'https://www.independent.ie/business/irish/rss/'
 rssTheJournalNews = 'https://thejournal.com/rss-feeds/all-articles.aspx'
+rssBreakingNewsTop = 'https://feeds.breakingnews.ie/bntopstories'
+rssBreakingNewsBusiness = 'https://feeds.breakingnews.ie/bnbusiness'
 webITBusinessNews = 'https://www.irishtimes.com/business/companies'
 
 # This will return a BeautifulSoup object from a specified RSS news feed URL
@@ -51,7 +53,7 @@ def fetchContactsData():
     mycursor = mydb.cursor()
 
     getContactsStatement = " \
-    SELECT tbl_contacts.cl_name  \
+    SELECT tbl_contacts.cl_name, tbl_contacts.cl_unique_id  \
     FROM tbl_projects \
     LEFT JOIN tbl_contacts \
     on tbl_projects.cl_unique_id = tbl_contacts.cl_unique_id \
@@ -219,12 +221,14 @@ def matchNewsItems(newsList):
 
         for contact in contactsQueryData:
 
+            if contact[0] == None:
+                continue
+    
             # Field needs to be converted to string from tuple
-            contactInLoop = ''
+            contactInLoop = contact[0]
 
-            map_str = map(str, contact)
-
-            contactInLoop = ''.join(map_str)
+            # map_str = map(str, contact)
+            # contactInLoop = ''.join(map_str)
 
             # fuzzMatch = fuzz.partial_ratio(newsHeader, cleaned(contactInLoop))
 
@@ -248,16 +252,22 @@ def matchNewsItems(newsList):
 contactsQueryData = fetchContactsData()
 
 
+# Breaking News Business
+listBreakingNewsBusiness = getXMLNews(rssBreakingNewsBusiness)
+printIndependentNewsItems(listBreakingNewsBusiness)
+matchNewsItems(listBreakingNewsBusiness)
+
+
 # The Journal
-listTheJournal = getXMLNews(rssTheJournalNews)
-printIndependentNewsItems(listTheJournal)
-matchNewsItems(listTheJournal)
-input("The Journal Results - Press Enter to continue...")
+# listTheJournal = getXMLNews(rssTheJournalNews)
+# printIndependentNewsItems(listTheJournal)
+# matchNewsItems(listTheJournal)
+# input("The Journal Results - Press Enter to continue...")
 
 # Irish Independent
-# listIndependent = getXMLNews(rssIndependentNews)
-# printIndependentNewsItems(listIndependent)
-# matchNewsItems(listIndependent)
+listIndependent = getXMLNews(rssIndependentNews)
+printIndependentNewsItems(listIndependent)
+matchNewsItems(listIndependent)
 
 # input("Irish Independent Results - Press Enter to continue...")
 
