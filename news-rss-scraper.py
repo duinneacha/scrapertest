@@ -213,7 +213,40 @@ def cleaned(currentContact):
     return cleanedItem_H
 
 
-def matchNewsItems(newsList):
+def writeMatchToDatabase(contact, newsItem, matchScore, newsProvider):
+    print("In news Item Writint to Database")
+    print("News Provider: ", newsProvider)
+    print("Fuzz Score:    ", matchScore)
+    print("Contact:       ", contact[0])
+    print("Contact ID:    ", contact[1])
+
+    newsTitle = newsItem.title.get_text()
+    newsPublishDate = newsItem.pubdate.get_text()
+
+    if (newsProvider == "Independent.ie") or (newsProvider == "BreakingNews.ie") or (newsProvider == "TheJournal.ie"):
+
+        newsLink = newsItem.find('link').next_element.strip()
+
+        try:
+            newsMediaThumbnailLink = newsItem.find("enclosure")["url"]
+        except:
+            newsMediaThumbnailLink = ""
+    elif (newsProvider == "RTE Business News"):
+
+        newsLink = newsItem.guid.get_text()
+
+        newsMediaThumbnailLink = newsItem.find("media:content")["url"]
+
+    print("Title: " + newsTitle)
+    print("Link:  " + newsLink)
+    print("Pic:   " + newsMediaThumbnailLink)
+    print("Date:  " + newsPublishDate)
+    print("")
+
+    # print("News Item:     ", newsItem)
+
+
+def matchNewsItems(newsProvider, newsList):
     """Take a news list and try to match against the Contacts List """
 
     for item in newsList.findAll('item'):
@@ -223,7 +256,7 @@ def matchNewsItems(newsList):
 
             if contact[0] == None:
                 continue
-    
+
             # Field needs to be converted to string from tuple
             contactInLoop = contact[0]
 
@@ -238,9 +271,10 @@ def matchNewsItems(newsList):
             # In some cases Contact equals None
             # Determine score of relevance
             if fuzzMatch > 70 and cleaned(contactInLoop) != 'None':
-                print(newsHeader)
-                print(cleaned(contactInLoop))
-                print("The score of fuzzywuzzy is " + str(fuzzMatch))
+                # print(newsHeader)
+                # print(cleaned(contactInLoop))
+                # print("The score of fuzzywuzzy is " + str(fuzzMatch))
+                writeMatchToDatabase(contact, item, fuzzMatch, newsProvider)
 
 
 # def main_function():
@@ -254,27 +288,21 @@ contactsQueryData = fetchContactsData()
 
 # Breaking News Business
 listBreakingNewsBusiness = getXMLNews(rssBreakingNewsBusiness)
-printIndependentNewsItems(listBreakingNewsBusiness)
-matchNewsItems(listBreakingNewsBusiness)
-
-
-# The Journal
-# listTheJournal = getXMLNews(rssTheJournalNews)
-# printIndependentNewsItems(listTheJournal)
-# matchNewsItems(listTheJournal)
-# input("The Journal Results - Press Enter to continue...")
+matchNewsItems("BreakingNews.ie", listBreakingNewsBusiness)
 
 # Irish Independent
 listIndependent = getXMLNews(rssIndependentNews)
-printIndependentNewsItems(listIndependent)
-matchNewsItems(listIndependent)
+matchNewsItems("Independent.ie", listIndependent)
 
-# input("Irish Independent Results - Press Enter to continue...")
+
+# The Journal
+listTheJournal = getXMLNews(rssTheJournalNews)
+matchNewsItems("TheJournal.ie", listTheJournal)
+
 
 # RTE Business News
-# listRTE = getXMLNews(rssRTEBusNews)
-# printNewsItems(listRTE)
-# matchNewsItems(listRTE)
+listRTE = getXMLNews(rssRTEBusNews)
+matchNewsItems("RTE Business News", listRTE)
 # input("RTE Business News - Press Enter to continue...")
 
 
