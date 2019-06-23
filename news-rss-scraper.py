@@ -19,6 +19,7 @@ mydb = mysql.connector.connect(
     database="nimbus-admin"
 )
 
+mycursor = mydb.cursor()
 
 # RSS Feeds
 rssRTEBusNews = 'https://www.rte.ie/feeds/rss/?index=/news/business/'
@@ -49,8 +50,15 @@ def getXMLNews(urlLink):
         return None
 
 
+def fetchNewsSites():
+    getNewsStatement = " \
+    SELECT news_scraping_sites.use_in_search, news_scraping_sites.site_name, news_scraping_sites.site_address from news_scraping_sites"
+    mycursor.execute(getNewsStatement)
+    newsSitesQueryData = mycursor.fetchall()
+    return newsSitesQueryData
+
+
 def fetchContactsData():
-    mycursor = mydb.cursor()
 
     getContactsStatement = " \
     SELECT tbl_contacts.cl_name, tbl_contacts.cl_unique_id  \
@@ -284,7 +292,17 @@ def matchNewsItems(newsProvider, newsList):
 # Build the News Lists
 # Tested
 contactsQueryData = fetchContactsData()
+newsSitesData = fetchNewsSites()
 
+for newsItem in newsSitesData:
+
+    if newsItem[0] == "x":
+        print(newsItem)
+        listNews = getXMLNews(newsItem[2])
+        matchNewsItems(newsItem[1], listNews)
+
+
+input("News Sites Data - Press Enter to continue...")
 
 # Breaking News Business
 listBreakingNewsBusiness = getXMLNews(rssBreakingNewsBusiness)
@@ -307,10 +325,9 @@ matchNewsItems("RTE Business News", listRTE)
 
 
 # # Irish Times
-# listIrishTimes = getXMLNews(rssIrishTimes)
-# printITNewsItems(listIrishTimes)
-# matchNewsItems(listIrishTimes)
-# input("Irish Times Business News - Press Enter to continue...")
+listIrishTimes = getXMLNews(rssIrishTimes)
+printITNewsItems(listIrishTimes)
+matchNewsItems("Irish Times", listIrishTimes)
 
 
 # listGoogleNews = getXMLNews(rssGoogleNews)
