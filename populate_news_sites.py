@@ -55,16 +55,18 @@ sql = "INSERT INTO news_scraping_sites(use_in_search, site_name, site_address) V
 
 valRTE = ("x", "RTE Business News", rssRTEBusNews)
 valInd = ("x", "Independent.ie", rssIndependentNews)
-valIT = (" ", "Irish Times", rssIrishTimes)
+valIT = ("x", "Irish Times", rssIrishTimes)
+valITB = ("x", "IT Business", rssITBusinessNews)
 valBN = ("x", "BreakingNews.ie", rssBreakingNewsBusiness)
 valTJ = ("x", "TheJournal.ie", rssTheJournalNews)
-valSR = (" ", "Silicon Republic", rssSiliconRepublicNews)
+valGN = ("x", "Google News", rssGoogleNews)
+valSR = ("x", "Silicon Republic", rssSiliconRepublicNews)
 valHN = (" ", "Hacker News", rssHackerNews)
-valGN = (" ", "Google News", rssGoogleNews)
 
 
 mycursor.execute(sql, valRTE)
 mycursor.execute(sql, valIT)
+mycursor.execute(sql, valITB)
 mycursor.execute(sql, valInd)
 mycursor.execute(sql, valBN)
 mycursor.execute(sql, valTJ)

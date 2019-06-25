@@ -184,15 +184,20 @@ def printGoogleNewsItems(newsObject):
 
     for item in newsObject.findAll('item'):
         print("In Google News")
-        print(item.prettify())
+
+        newsTitle = item.title.get_text()
+        newsLink = item.find('link').next_element.strip()
+
+        # print(item.prettify())
         # print(item.category.get_text())
-        print(item.title.get_text())
-        print(item.description.get_text())
-        print(item.guid.get_text())
+        # print(item.title.get_text())
+        # print(item.description.get_text())
+        # print(item.guid.get_text())
 
         link = item.find('link').next_element
 
-        print("link is : " + link)
+        print("Title : " + newsTitle)
+        print("link  : " + newsLink)
         # print(thumb["url"])
 
 
@@ -221,8 +226,8 @@ def cleaned(currentContact):
     return cleanedItem_H
 
 
-def writeMatchToDatabase(contact, newsItem, matchScore, newsProvider):
-    print("In news Item Writint to Database")
+def parseMatchData(contact, newsItem, matchScore, newsProvider):
+    print("In news Item Writing to Database")
     print("News Provider: ", newsProvider)
     print("Fuzz Score:    ", matchScore)
     print("Contact:       ", contact[0])
@@ -231,7 +236,7 @@ def writeMatchToDatabase(contact, newsItem, matchScore, newsProvider):
     newsTitle = newsItem.title.get_text()
     newsPublishDate = newsItem.pubdate.get_text()
 
-    if (newsProvider == "Independent.ie") or (newsProvider == "BreakingNews.ie") or (newsProvider == "TheJournal.ie"):
+    if (newsProvider == "Independent.ie") or (newsProvider == "BreakingNews.ie") or (newsProvider == "TheJournal.ie") or (newsProvider == "Hacker News"):
 
         newsLink = newsItem.find('link').next_element.strip()
 
@@ -244,6 +249,22 @@ def writeMatchToDatabase(contact, newsItem, matchScore, newsProvider):
         newsLink = newsItem.guid.get_text()
 
         newsMediaThumbnailLink = newsItem.find("media:content")["url"]
+    elif (newsProvider == "IT Business") or (newsProvider == "Irish Times"):
+        print("IT Match")
+        newsLink = newsItem.find('link').next_element.strip()
+        try:
+            newsMediaThumbnailLink = newsItem.find("enclosure")["url"]
+        except:
+            newsMediaThumbnailLink = ""
+    elif (newsProvider == "Google News"):
+        newsMediaThumbnailLink = ""
+        newsLink = newsItem.find('link').next_element.strip()
+    elif (newsProvider == "Silicon Republic"):
+        try:
+            newsMediaThumbnailLink = newsItem.find("media:thumbnail")["url"]
+        except:
+            newsMediaThumbnailLink = ""
+        newsLink = newsItem.find('link').next_element.strip()
 
     print("Title: " + newsTitle)
     print("Link:  " + newsLink)
@@ -282,7 +303,7 @@ def matchNewsItems(newsProvider, newsList):
                 # print(newsHeader)
                 # print(cleaned(contactInLoop))
                 # print("The score of fuzzywuzzy is " + str(fuzzMatch))
-                writeMatchToDatabase(contact, item, fuzzMatch, newsProvider)
+                parseMatchData(contact, item, fuzzMatch, newsProvider)
 
 
 # def main_function():
@@ -302,42 +323,55 @@ for newsItem in newsSitesData:
         matchNewsItems(newsItem[1], listNews)
 
 
-input("News Sites Data - Press Enter to continue...")
+# input("News Sites Data - Press Enter to continue...")
 
 # Breaking News Business
-listBreakingNewsBusiness = getXMLNews(rssBreakingNewsBusiness)
-matchNewsItems("BreakingNews.ie", listBreakingNewsBusiness)
+# listBreakingNewsBusiness = getXMLNews(rssBreakingNewsBusiness)
+# matchNewsItems("BreakingNews.ie", listBreakingNewsBusiness)
 
 # Irish Independent
-listIndependent = getXMLNews(rssIndependentNews)
-matchNewsItems("Independent.ie", listIndependent)
+# listIndependent = getXMLNews(rssIndependentNews)
+# matchNewsItems("Independent.ie", listIndependent)
 
 
 # The Journal
-listTheJournal = getXMLNews(rssTheJournalNews)
-matchNewsItems("TheJournal.ie", listTheJournal)
+# listTheJournal = getXMLNews(rssTheJournalNews)
+# matchNewsItems("TheJournal.ie", listTheJournal)
 
 
 # RTE Business News
-listRTE = getXMLNews(rssRTEBusNews)
-matchNewsItems("RTE Business News", listRTE)
+# listRTE = getXMLNews(rssRTEBusNews)
+# matchNewsItems("RTE Business News", listRTE)
 # input("RTE Business News - Press Enter to continue...")
 
 
-# # Irish Times
-listIrishTimes = getXMLNews(rssIrishTimes)
-printITNewsItems(listIrishTimes)
-matchNewsItems("Irish Times", listIrishTimes)
+# Irish Times
+# listIrishTimes = getXMLNews(rssIrishTimes)
+# printITNewsItems(listIrishTimes)
+# matchNewsItems("Irish Times", listIrishTimes)
+
+# IT Business
+# listITBusiness = getXMLNews(rssITBusinessNews)
+# printITNewsItems(listITBusiness)
+# matchNewsItems("IT Business", listITBusiness)
 
 
+# Google News
 # listGoogleNews = getXMLNews(rssGoogleNews)
-# listSiliconRepublic = getXMLNews(rssSiliconRepublicNews)
-
-
-# Parse the News Lists
 # printGoogleNewsItems(listGoogleNews)
-# printStandardNewsItems(listSiliconRepublic)
+# matchNewsItems("Google News", listGoogleNews)
 
+
+# listSiliconRepublic = getXMLNews(rssSiliconRepublicNews)
+# printStandardNewsItems(listSiliconRepublic)
+# matchNewsItems("Silicon Republic", listSiliconRepublic)
+
+# Hacker News
+
+listHackerNews = getXMLNews(rssHackerNews)
+# printStandardNewsItems(listHackerNews)
+printIndependentNewsItems(listHackerNews)
+matchNewsItems("Hacker News", listHackerNews)
 
 # if listRTE == None:
 # print("Nothing returned in RTE!!")
@@ -347,7 +381,6 @@ matchNewsItems("Irish Times", listIrishTimes)
 # Match the news items against the contacts table
 # matchNewsItems(listRTE)
 # matchNewsItems(listIrishTimes)
-# matchNewsItems(listGoogleNews)
 
 
 # listwebITBusiness = getXMLNews(webITBusinessNews)
