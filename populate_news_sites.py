@@ -61,7 +61,7 @@ valBN = ("x", "BreakingNews.ie", rssBreakingNewsBusiness)
 valTJ = ("x", "TheJournal.ie", rssTheJournalNews)
 valGN = ("x", "Google News", rssGoogleNews)
 valSR = ("x", "Silicon Republic", rssSiliconRepublicNews)
-valHN = (" ", "Hacker News", rssHackerNews)
+valHN = ("x", "Hacker News", rssHackerNews)
 
 
 mycursor.execute(sql, valRTE)

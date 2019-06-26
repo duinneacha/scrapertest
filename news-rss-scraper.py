@@ -10,6 +10,10 @@ import csv
 
 # print(dir(fuzz))
 
+# Open textfile for raw links to process
+with open('linkstempfile.txt', 'w') as link_file:
+    pass
+
 
 contactsQueryData = ''
 mydb = mysql.connector.connect(
@@ -71,6 +75,7 @@ def fetchContactsData():
     mycursor.execute(getContactsStatement)
 
     contactsQueryData = mycursor.fetchall()
+    # mycursor.close()
     return contactsQueryData
 
 
@@ -272,6 +277,16 @@ def parseMatchData(contact, newsItem, matchScore, newsProvider):
     print("Date:  " + newsPublishDate)
     print("")
 
+    with open('linkstempfile.txt', 'wb') as link_file:
+        fieldNames = [newsTitle, newsLink]
+        writer = csv.writer(link_file)
+        print(writer)
+        link_file.writerow(fieldNames)
+        # link_file.write(newsTitle)
+        # link_file.write(newsLink)
+        # print(newsTitle)
+        # link_file.write('\n')
+
     # print("News Item:     ", newsItem)
 
 
@@ -314,10 +329,47 @@ def matchNewsItems(newsProvider, newsList):
 # Tested
 contactsQueryData = fetchContactsData()
 newsSitesData = fetchNewsSites()
+mydb.close()
+for index, newsItem in enumerate(newsSitesData, start=1):
 
-for newsItem in newsSitesData:
-
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
+    print("Index is:", index)
     if newsItem[0] == "x":
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
+        print(newsItem)
         print(newsItem)
         listNews = getXMLNews(newsItem[2])
         matchNewsItems(newsItem[1], listNews)
