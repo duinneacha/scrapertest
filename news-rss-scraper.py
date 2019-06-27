@@ -59,7 +59,7 @@ def fetchNewsSites():
     getNewsStatement = " \
     SELECT news_scraping_sites.use_in_search, news_scraping_sites.site_name, news_scraping_sites.site_address from news_scraping_sites"
     mycursor.execute(getNewsStatement)
-    
+
     newsSitesQueryData = mycursor.fetchall()
     return newsSitesQueryData
 
@@ -280,18 +280,31 @@ def parseMatchData(contact, newsItem, matchScore, newsProvider):
     print("Date:  " + newsPublishDate)
     print("")
 
-    with open('linkstempfile.txt', 'a+') as link_file:
-        fieldNames = [contact[0], matchScore, newsProvider, newsTitle, newsLink, newsMediaThumbnailLink, newsPublishDate ]
-        writer = csv.writer(link_file)
-        writer.writerow(fieldNames)
-        # writer.writerow(fieldNames)
-        # link_file.writerow(fieldNames)
-        # link_file.write(newsTitle)
-        # link_file.write(newsLink)
-        # print(newsTitle)
-        # link_file.write('\n')
+    # Open the csv file and check to see if the match is already in the file
+    with open('linkstempfile.txt') as read_file:
+        reader = csv.reader(read_file)
 
-    # print("News Item:     ", newsItem)
+        count = 0
+        t_match = False
+        print("In csv read")
+        print("In csv read")
+        print("In csv read")
+        print("In csv read")
+        print("In csv read")
+        print("In csv read")
+        for row in reader:
+
+            if (row[3] == newsTitle):
+                print("**********************************",
+                      row[3], " is a match with ", newsTitle)
+                t_match = True
+
+    if not t_match:
+        with open('linkstempfile.txt', 'a+', newline='') as link_file:
+            fieldNames = [contact[0], matchScore, newsProvider, newsTitle,
+                          newsLink, newsMediaThumbnailLink, newsPublishDate]
+            writer = csv.writer(link_file)
+            writer.writerow(fieldNames)
 
 
 def matchNewsItems(newsProvider, newsList):
