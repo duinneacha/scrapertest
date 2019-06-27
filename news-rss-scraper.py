@@ -55,9 +55,11 @@ def getXMLNews(urlLink):
 
 
 def fetchNewsSites():
+    print("In Fetch News Sites!!")
     getNewsStatement = " \
     SELECT news_scraping_sites.use_in_search, news_scraping_sites.site_name, news_scraping_sites.site_address from news_scraping_sites"
     mycursor.execute(getNewsStatement)
+    
     newsSitesQueryData = mycursor.fetchall()
     return newsSitesQueryData
 
@@ -75,6 +77,7 @@ def fetchContactsData():
     mycursor.execute(getContactsStatement)
 
     contactsQueryData = mycursor.fetchall()
+    # print(contactsQueryData)
     # mycursor.close()
     return contactsQueryData
 
@@ -277,11 +280,12 @@ def parseMatchData(contact, newsItem, matchScore, newsProvider):
     print("Date:  " + newsPublishDate)
     print("")
 
-    with open('linkstempfile.txt', 'wb') as link_file:
-        fieldNames = [newsTitle, newsLink]
+    with open('linkstempfile.txt', 'a+') as link_file:
+        fieldNames = [contact[0], matchScore, newsProvider, newsTitle, newsLink, newsMediaThumbnailLink, newsPublishDate ]
         writer = csv.writer(link_file)
-        print(writer)
-        link_file.writerow(fieldNames)
+        writer.writerow(fieldNames)
+        # writer.writerow(fieldNames)
+        # link_file.writerow(fieldNames)
         # link_file.write(newsTitle)
         # link_file.write(newsLink)
         # print(newsTitle)
@@ -333,44 +337,10 @@ mydb.close()
 for index, newsItem in enumerate(newsSitesData, start=1):
 
     print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
-    print("Index is:", index)
+
     if newsItem[0] == "x":
         print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
-        print(newsItem)
+
         listNews = getXMLNews(newsItem[2])
         matchNewsItems(newsItem[1], listNews)
 
@@ -420,10 +390,10 @@ for index, newsItem in enumerate(newsSitesData, start=1):
 
 # Hacker News
 
-listHackerNews = getXMLNews(rssHackerNews)
+# listHackerNews = getXMLNews(rssHackerNews)
 # printStandardNewsItems(listHackerNews)
-printIndependentNewsItems(listHackerNews)
-matchNewsItems("Hacker News", listHackerNews)
+# printIndependentNewsItems(listHackerNews)
+# matchNewsItems("Hacker News", listHackerNews)
 
 # if listRTE == None:
 # print("Nothing returned in RTE!!")

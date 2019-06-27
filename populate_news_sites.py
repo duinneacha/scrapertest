@@ -41,7 +41,7 @@ mycursor = mydb.cursor()
 dbTable = "news_scraping_sites"
 t_Exist = checkTableExists(mydb, dbTable)
 if t_Exist:
-    print(dbTable, "Already not exists - Dropping")
+    print(dbTable, "Already exists - Dropping")
     mycursor.execute("DROP TABLE news_scraping_sites")
 
 mycursor.execute(
@@ -77,3 +77,4 @@ print("Adding News Sites")
 
 
 mydb.commit()
+mydb.close()
