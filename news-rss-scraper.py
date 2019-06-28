@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from fuzzywuzzy import fuzz, process
 
 import csv
+import operator
 
 # print(dir(fuzz))
 
@@ -233,6 +234,33 @@ def cleaned(currentContact):
 
     return cleanedItem_H
 
+def writeMatchToCSV(fieldList):
+    print(fieldList)
+    print(fieldList)
+    print(fieldList)
+    print(fieldList)
+    print(fieldList)
+    print(fieldList)
+    # Open the csv file and check to see if the match is already in the file
+    with open('linkstempfile.txt') as read_file:
+        reader = csv.reader(read_file)
+
+        count = 0
+        t_match = False
+        print("In csv read")
+
+        for row in reader:
+
+            if (row[3] == fieldList[3]):
+                print("**********************************",
+                      row[3], " is a match with ", fieldList[3])
+                t_match = True
+
+    if not t_match:
+        with open('linkstempfile.txt', 'a+', newline='') as link_file:
+            writer = csv.writer(link_file)
+            writer.writerow(fieldList)
+
 
 def parseMatchData(contact, newsItem, matchScore, newsProvider):
     print("In news Item Writing to Database")
@@ -280,31 +308,10 @@ def parseMatchData(contact, newsItem, matchScore, newsProvider):
     print("Date:  " + newsPublishDate)
     print("")
 
-    # Open the csv file and check to see if the match is already in the file
-    with open('linkstempfile.txt') as read_file:
-        reader = csv.reader(read_file)
+    fieldNames = [newsProvider, contact[0], matchScore, newsTitle, newsLink, newsMediaThumbnailLink, newsPublishDate]
 
-        count = 0
-        t_match = False
-        print("In csv read")
-        print("In csv read")
-        print("In csv read")
-        print("In csv read")
-        print("In csv read")
-        print("In csv read")
-        for row in reader:
+    writeMatchToCSV(fieldNames)
 
-            if (row[3] == newsTitle):
-                print("**********************************",
-                      row[3], " is a match with ", newsTitle)
-                t_match = True
-
-    if not t_match:
-        with open('linkstempfile.txt', 'a+', newline='') as link_file:
-            fieldNames = [contact[0], matchScore, newsProvider, newsTitle,
-                          newsLink, newsMediaThumbnailLink, newsPublishDate]
-            writer = csv.writer(link_file)
-            writer.writerow(fieldNames)
 
 
 def matchNewsItems(newsProvider, newsList):
@@ -332,177 +339,44 @@ def matchNewsItems(newsProvider, newsList):
             # In some cases Contact equals None
             # Determine score of relevance
             if fuzzMatch > 70 and cleaned(contactInLoop) != 'None':
-                # print(newsHeader)
-                # print(cleaned(contactInLoop))
-                # print("The score of fuzzywuzzy is " + str(fuzzMatch))
                 parseMatchData(contact, item, fuzzMatch, newsProvider)
 
 
-# def main_function():
-""" Build Lists, Parse Lists, Get Contacts, Match Contacts """
+def writeTopNewsItem(newsItem, listNews):
+    """Write the top news item is the News Site to the temp file"""
+    print("newsItem", newsItem)
+    print("listNews", listNews.findAll('item')[0])
+    topNewsItem = listNews.findAll('item')[0]
+    newsProvider = newsItem[1]
+    parseMatchData("Top News", topNewsItem, "Top", newsProvider)
+    print(newsItem)
+
+    # input("Press Eeenter . . . .")
+
 
 
 # Build the News Lists
-# Tested
 contactsQueryData = fetchContactsData()
 newsSitesData = fetchNewsSites()
 mydb.close()
-for index, newsItem in enumerate(newsSitesData, start=1):
+for index, newsList in enumerate(newsSitesData, start=1):
 
     print("Index is:", index)
 
-    if newsItem[0] == "x":
-        print(newsItem)
+    if newsList[0] == "x":
+        print(newsList)
 
-        listNews = getXMLNews(newsItem[2])
-        matchNewsItems(newsItem[1], listNews)
-
-
-# input("News Sites Data - Press Enter to continue...")
-
-# Breaking News Business
-# listBreakingNewsBusiness = getXMLNews(rssBreakingNewsBusiness)
-# matchNewsItems("BreakingNews.ie", listBreakingNewsBusiness)
-
-# Irish Independent
-# listIndependent = getXMLNews(rssIndependentNews)
-# matchNewsItems("Independent.ie", listIndependent)
+        rssScrapelist = getXMLNews(newsList[2])
+        writeTopNewsItem(newsList,rssScrapelist)
+        matchNewsItems(newsList[1], rssScrapelist)
 
 
-# The Journal
-# listTheJournal = getXMLNews(rssTheJournalNews)
-# matchNewsItems("TheJournal.ie", listTheJournal)
+rawLinkFile = open('linkstempfile.txt', 'r')
+csv1 = csv.reader(rawLinkFile, delimiter=',')
+sort = sorted(csv1, key=operator.itemgetter(2))
 
-
-# RTE Business News
-# listRTE = getXMLNews(rssRTEBusNews)
-# matchNewsItems("RTE Business News", listRTE)
-# input("RTE Business News - Press Enter to continue...")
-
-
-# Irish Times
-# listIrishTimes = getXMLNews(rssIrishTimes)
-# printITNewsItems(listIrishTimes)
-# matchNewsItems("Irish Times", listIrishTimes)
-
-# IT Business
-# listITBusiness = getXMLNews(rssITBusinessNews)
-# printITNewsItems(listITBusiness)
-# matchNewsItems("IT Business", listITBusiness)
-
-
-# Google News
-# listGoogleNews = getXMLNews(rssGoogleNews)
-# printGoogleNewsItems(listGoogleNews)
-# matchNewsItems("Google News", listGoogleNews)
-
-
-# listSiliconRepublic = getXMLNews(rssSiliconRepublicNews)
-# printStandardNewsItems(listSiliconRepublic)
-# matchNewsItems("Silicon Republic", listSiliconRepublic)
-
-# Hacker News
-
-# listHackerNews = getXMLNews(rssHackerNews)
-# printStandardNewsItems(listHackerNews)
-# printIndependentNewsItems(listHackerNews)
-# matchNewsItems("Hacker News", listHackerNews)
-
-# if listRTE == None:
-# print("Nothing returned in RTE!!")
-
-# Fetch the information from the Nimbus Contacts SQL Table
-
-# Match the news items against the contacts table
-# matchNewsItems(listRTE)
-# matchNewsItems(listIrishTimes)
-
-
-# listwebITBusiness = getXMLNews(webITBusinessNews)
-# print(listwebITBusiness)
-
-# main_function()
-
-
-# print(soup)
-
-# for (num, item) in enumerate(soup.contents):
-#     print(num+1)
-#     print(item)
-
-# print("ADDDDD")
-# print(soup)
-# print("ADDDDD")
-
-
-# for item in listRTE.findAll('item'):
-#     print("AD")
-#     # print(item)
-#     print(item.category.get_text())
-#     print(item.title.get_text())
-#     print(item.description.get_text())
-#     print(item.guid.get_text())
-#     thumb = item.find("media:content")
-#     print(thumb)
-#     print(thumb["url"])
-
-# print("mydb:-")
-# print(mydb)
-
-
-# mycursor = mydb.cursor()
-
-# mycursor.execute("SHOW TABLES")
-# print(mycursor)
-
-# for x in mycursor:
-# print("")
-
-
-# for x in myresult:
-#     print(x)
-
-
-# with open('contacts.txt', mode='w') as contacts_file:
-#     contact_writer = csv.writer(
-#         contacts_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-#     for x in contactsQueryData:
-#         print(x)
-#         contact_writer.writerow(x)
-
-
-# for item in listRTE.findAll('item'):
-#     # print("AD")
-#     # print(item)
-#     # print(item.title.get_text())
-#     newsHeader = item.title.get_text()
-#     for contact in contactsQueryData:
-#         # print(item.title.get_text())
-#         # print(contact)
-#         fuzzMatch = fuzz.partial_ratio(newsHeader, contact)
-#         # fuzzMatch = fuzz.WRatio(contact, newsHeader)
-#         # fuzzMatch = fuzz.token_sort_ratio(contact, newsHeader)
-#         if fuzzMatch > 50:
-#             print(fuzzMatch)
-#             print(newsHeader)
-#             print(contact)
-
-# print("**************************************")
-# print("**************************************")
-# print("**************************************")
-# print("**************************************")
-# print("**************************************")
-# print("**************************************")
-
-# for item in listIrishTimes.findAll('item'):
-#     newsHeader = item.title.get_text()
-#     for contact in contactsQueryData:
-#         # print(item.title.get_text())
-#         # print(contact)
-#         fuzzMatch = fuzz.partial_ratio(newsHeader, contact)
-#         # fuzzMatch = fuzz.WRatio(contact, newsHeader)
-#         # fuzzMatch = fuzz.token_sort_ratio(contact, newsHeader)
-#         if fuzzMatch > 50:
-#             print(fuzzMatch)
-#             print(newsHeader)
-#             print(contact)
+with open('linkfilesorted.txt', 'w', newline='') as link_sorted:
+    writer = csv.writer(link_sorted)
+    
+    for eachline in sort:
+        writer.writerow(eachline)
