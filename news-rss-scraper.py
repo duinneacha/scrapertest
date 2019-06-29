@@ -227,3 +227,50 @@ with open('linkfilesorted.txt', 'w', newline='') as link_sorted:
 
     for eachline in sort:
         writer.writerow(eachline)
+
+
+def printExaminerNewsItems(newsObject):
+    """ Independant.ie business RSS news parser"""
+    print("Down south the Cork Examiner is the one they call the Paper")
+    print("Down south the Cork Examiner is the one they call the Paper")
+    print("Down south the Cork Examiner is the one they call the Paper")
+    print("Down south the Cork Examiner is the one they call the Paper")
+    print("Down south the Cork Examiner is the one they call the Paper")
+    print("Down south the Cork Examiner is the one they call the Paper")
+    print("Down south the Cork Examiner is the one they call the Paper")
+    print("Down south the Cork Examiner is the one they call the Paper")
+    print("Down south the Cork Examiner is the one they call the Paper")
+    print("Down south the Cork Examiner is the one they call the Paper")
+    print("Down south the Cork Examiner is the one they call the Paper")
+
+    for item in newsObject.findAll('entry'):
+        print(item)
+        newsTitle = item.title.get_text()
+        newsLink = item.find('link').next_element.strip()
+        adNewsLink = item.find('link')["href"]
+
+        try:
+            newsMediaThumbnailLink = item.find("enclosure")["url"]
+        except:
+            newsMediaThumbnailLink = ""
+
+        # newsMediaThumbnailLink = ""
+
+        typeNewsMediaThumbnailLink = ""
+        # if type(item.find("enclosure")["url"]) is str:
+        #     print("Is a string")
+
+        newsPublishDate = item.published.get_text()
+
+        print("Title: " + newsTitle)
+        print("Link:  " + newsLink)
+        print("ADLink:", adNewsLink)
+        # print("Type of Pic:   ")
+        # print(typeNewsMediaThumbnailLink)
+        print("Pic:   " + newsMediaThumbnailLink)
+        print("Date:  " + newsPublishDate)
+        print("")
+
+
+rssExaminer = getXMLNews('https://feeds.feedburner.com/iebusiness')
+printExaminerNewsItems(rssExaminer)
