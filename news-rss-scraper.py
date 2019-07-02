@@ -4,10 +4,12 @@ import requests
 import mysql.connector
 from bs4 import BeautifulSoup
 from fuzzywuzzy import fuzz, process
-
+import logging
 import csv
 import operator
 
+
+logging.basicConfig(filename='scrapenews.log', level=logging.DEBUG, format='%(asctime)s:%(levelname)s:%(message)s')
 
 # Open textfile for raw links to process
 with open('linkstempfile.txt', 'w') as link_file:
@@ -30,7 +32,7 @@ def getXMLNews(urlLink):
 
     req = requests.get(urlLink)
     if req.status_code == 200:
-        print("Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        # print("Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         soup = BeautifulSoup(req.text, 'html.parser')
         return soup
     else:
@@ -39,7 +41,7 @@ def getXMLNews(urlLink):
 
 
 def fetchNewsSites():
-    print("In Fetch News Sites!!")
+    # print("In Fetch News Sites!!")
     getNewsStatement = " \
     SELECT news_scraping_sites.use_in_search, news_scraping_sites.site_name, news_scraping_sites.site_address from news_scraping_sites"
     mycursor.execute(getNewsStatement)
@@ -90,13 +92,13 @@ def writeMatchToCSV(fieldList):
 
         count = 0
         t_match = False
-        print("In csv read")
+        # print("In csv read")
 
         for row in reader:
 
             if (row[3] == fieldList[3]):
-                print("**********************************",
-                      row[3], " is a match with ", fieldList[3])
+                # print("**********************************",
+                #       row[3], " is a match with ", fieldList[3])
                 t_match = True
 
     if not t_match:
@@ -106,14 +108,17 @@ def writeMatchToCSV(fieldList):
 
 
 def parseMatchData(contact, newsItem, matchScore, newsProvider):
-    print("In news Item Writing to Database")
-    print("News Provider: ", newsProvider)
-    print("Fuzz Score:    ", matchScore)
-    print("Contact:       ", contact[0])
-    print("Contact ID:    ", contact[1])
+    # print("In news Item Writing to Database")
+    # print("News Provider: ", newsProvider)
+    # print("Fuzz Score:    ", matchScore)
+    # print("Contact:       ", contact[0])
+    # print("Contact ID:    ", contact[1])
 
     newsTitle = newsItem.title.get_text()
-    newsPublishDate = newsItem.pubdate.get_text()
+    if newsProvider == 'The Examiner':
+        newsPublishDate = newsItem.published.get_text()
+    else:
+        newsPublishDate = newsItem.pubdate.get_text()
 
     if (newsProvider == "Independent.ie") or (newsProvider == "BreakingNews.ie") or (newsProvider == "TheJournal.ie") or (newsProvider == "Hacker News"):
 
@@ -128,8 +133,7 @@ def parseMatchData(contact, newsItem, matchScore, newsProvider):
         newsLink = newsItem.guid.get_text()
 
         newsMediaThumbnailLink = newsItem.find("media:content")["url"]
-    elif (newsProvider == "IT Business") or (newsProvider == "Irish Times"):
-        print("IT Match")
+    elif (newsProvider == "IT Business") or (newsProvider == "Irish Times"):      
         newsLink = newsItem.find('link').next_element.strip()
         try:
             newsMediaThumbnailLink = newsItem.find("enclosure")["url"]
@@ -144,12 +148,18 @@ def parseMatchData(contact, newsItem, matchScore, newsProvider):
         except:
             newsMediaThumbnailLink = ""
         newsLink = newsItem.find('link').next_element.strip()
+    elif (newsProvider == "The Examiner"):
+        try:
+            newsMediaThumbnailLink = newsItem.find("media:thumbnail")["url"]
+        except:
+            newsMediaThumbnailLink = ""
+        newsLink = newsItem.find('link')["href"]
 
-    print("Title: " + newsTitle)
-    print("Link:  " + newsLink)
-    print("Pic:   " + newsMediaThumbnailLink)
-    print("Date:  " + newsPublishDate)
-    print("")
+    # print("Title: " + newsTitle)
+    # print("Link:  " + newsLink)
+    # print("Pic:   " + newsMediaThumbnailLink)
+    # print("Date:  " + newsPublishDate)
+    # print("")
 
     fieldNames = [newsProvider, contact[0], matchScore, newsTitle,
                   newsLink, newsMediaThumbnailLink, newsPublishDate]
@@ -160,11 +170,19 @@ def parseMatchData(contact, newsItem, matchScore, newsProvider):
 def matchNewsItems(newsProvider, newsList, contactList):
     """Take a news list and try to match against the Contacts List """
 
-    for item in newsList.findAll('item'):
-        newsHeader = item.title.get_text()
+    # The Examiner has a differend news tag to the rest of the news sources - entry (not item)
+    if newsProvider == "The Examiner":
+        headerTag = "entry"
+    else:
+        headerTag = "item"
+    
+    for item in newsList.findAll(headerTag):
 
+        newsHeader = item.title.get_text()
+       
         for contact in contactList:
 
+            # In some cases Contact equals None
             if contact[0] == None:
                 continue
 
@@ -179,18 +197,26 @@ def matchNewsItems(newsProvider, newsList, contactList):
             fuzzMatch = fuzz.token_set_ratio(
                 newsHeader, cleaned(contactInLoop))
 
-            # In some cases Contact equals None
+
             # Determine score of relevance
             if fuzzMatch > 70 and cleaned(contactInLoop) != 'None':
-                parseMatchData(contact, item, fuzzMatch, newsProvider)
+                 parseMatchData(contact, item, fuzzMatch, newsProvider)
 
 
 def writeTopNewsItem(newsItem, listNews):
     """Write the top news item is the News Site to the temp file"""
     # print("newsItem", newsItem)
     # print("listNews", listNews.findAll('item')[0])
-    topNewsItem = listNews.findAll('item')[0]
     newsProvider = newsItem[1]
+
+    if newsProvider == "The Examiner":
+        topNewsItem = listNews.findAll('entry')[0]
+    else:
+        topNewsItem = listNews.findAll('item')[0]
+
+    
+    
+    
     parseMatchData("Top News", topNewsItem, "Top", newsProvider)
     # print(newsItem)
 
@@ -202,12 +228,12 @@ contactsQueryData = fetchContactsData()
 newsSitesData = fetchNewsSites()
 mydb.close()
 
-extraList = [("Nimbus", 0), ("Funding", 0), ("Sex Pot", 0)]
+extraList = [("Nimbus", 0), ("CIT", 0)]
 
 
 for index, newsList in enumerate(newsSitesData, start=1):
 
-    print("Index is:", index)
+    # print("Index is:", index)
 
     if newsList[0] == "x":
         print(newsList)
@@ -230,18 +256,7 @@ with open('linkfilesorted.txt', 'w', newline='') as link_sorted:
 
 
 def printExaminerNewsItems(newsObject):
-    """ Independant.ie business RSS news parser"""
-    print("Down south the Cork Examiner is the one they call the Paper")
-    print("Down south the Cork Examiner is the one they call the Paper")
-    print("Down south the Cork Examiner is the one they call the Paper")
-    print("Down south the Cork Examiner is the one they call the Paper")
-    print("Down south the Cork Examiner is the one they call the Paper")
-    print("Down south the Cork Examiner is the one they call the Paper")
-    print("Down south the Cork Examiner is the one they call the Paper")
-    print("Down south the Cork Examiner is the one they call the Paper")
-    print("Down south the Cork Examiner is the one they call the Paper")
-    print("Down south the Cork Examiner is the one they call the Paper")
-    print("Down south the Cork Examiner is the one they call the Paper")
+    """ Th Examiner Business RSS news parser"""
 
     for item in newsObject.findAll('entry'):
         print(item)
@@ -262,15 +277,16 @@ def printExaminerNewsItems(newsObject):
 
         newsPublishDate = item.published.get_text()
 
-        print("Title: " + newsTitle)
-        print("Link:  " + newsLink)
-        print("ADLink:", adNewsLink)
+        # print("Title: " + newsTitle)
+        # print("Link:  " + newsLink)
+        # print("ADLink:", adNewsLink)
         # print("Type of Pic:   ")
         # print(typeNewsMediaThumbnailLink)
-        print("Pic:   " + newsMediaThumbnailLink)
-        print("Date:  " + newsPublishDate)
-        print("")
+        # print("Pic:   " + newsMediaThumbnailLink)
+        # print("Date:  " + newsPublishDate)
+        # print("")
 
 
-rssExaminer = getXMLNews('https://feeds.feedburner.com/iebusiness')
-printExaminerNewsItems(rssExaminer)
+# rssExaminer = getXMLNews('https://feeds.feedburner.com/iebusiness')
+# printExaminerNewsItems(rssExaminer)
+# matchNewsItems(newsList[1], rssScrapelist, contactsQueryData)

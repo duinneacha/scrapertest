@@ -20,7 +20,7 @@ rssTheJournalNews = 'https://thejournal.com/rss-feeds/all-articles.aspx'
 rssBreakingNewsTop = 'https://feeds.breakingnews.ie/bntopstories'
 rssBreakingNewsBusiness = 'https://feeds.breakingnews.ie/bnbusiness'
 webITBusinessNews = 'https://www.irishtimes.com/business/companies'
-
+rssExaminerNews = 'https://feeds.feedburner.com/iebusiness'
 
 def checkTableExists(dbcon, tablename):
     dbcur = dbcon.cursor()
@@ -62,6 +62,8 @@ valTJ = ("x", "TheJournal.ie", rssTheJournalNews)
 valGN = ("x", "Google News", rssGoogleNews)
 valSR = ("x", "Silicon Republic", rssSiliconRepublicNews)
 valHN = ("x", "Hacker News", rssHackerNews)
+valTE = ("x", "The Examiner", rssExaminerNews)
+
 
 
 mycursor.execute(sql, valRTE)
@@ -73,6 +75,7 @@ mycursor.execute(sql, valTJ)
 mycursor.execute(sql, valSR)
 mycursor.execute(sql, valHN)
 mycursor.execute(sql, valGN)
+mycursor.execute(sql, valTE)
 print("Adding News Sites")
 
 
