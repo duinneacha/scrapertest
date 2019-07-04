@@ -7,6 +7,12 @@ from fuzzywuzzy import fuzz, process
 import logging
 import csv
 import operator
+import sys
+
+print("This is the name of the script: ", sys.argv[0])
+print("Number of arguments: ", len(sys.argv))
+print("The arguments are: ", str(sys.argv))
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='scrapenews.log', level=logging.DEBUG,
@@ -33,7 +39,6 @@ def getXMLNews(urlLink):
 
     req = requests.get(urlLink)
     if req.status_code == 200:
-        # print("Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         soup = BeautifulSoup(req.text, 'html.parser')
         logger.info('Data Received from: {}'.format(urlLink))
         return soup
@@ -43,7 +48,8 @@ def getXMLNews(urlLink):
 
 
 def fetchNewsSites():
-    # print("In Fetch News Sites!!")
+    """Fetch the news sites from MYSQL news_scraping_sites table"""
+
     getNewsStatement = " \
     SELECT news_scraping_sites.use_in_search, news_scraping_sites.site_name, news_scraping_sites.site_address from news_scraping_sites"
     mycursor.execute(getNewsStatement)
@@ -179,7 +185,7 @@ def matchNewsItems(newsProvider, newsList, contactList):
     for item in newsList.findAll(headerTag):
 
         newsHeader = item.title.get_text()
-
+        # print(newsHeader)
         for contact in contactList:
 
             # In some cases Contact equals None
@@ -188,9 +194,6 @@ def matchNewsItems(newsProvider, newsList, contactList):
 
             # Field needs to be converted to string from tuple
             contactInLoop = contact[0]
-
-            # map_str = map(str, contact)
-            # contactInLoop = ''.join(map_str)
 
             # fuzzMatch = fuzz.partial_ratio(newsHeader, cleaned(contactInLoop))
 
@@ -226,7 +229,7 @@ mydb.close()
 
 extraList = [("Nimbus", 0), ("CIT", 0)]
 
-
+# Loop through the news sites and get Top news item and any news items that are associated with the names in the contacts table
 for index, newsList in enumerate(newsSitesData, start=1):
 
     # print("Index is:", index)

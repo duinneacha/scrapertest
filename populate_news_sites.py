@@ -22,6 +22,7 @@ rssBreakingNewsBusiness = 'https://feeds.breakingnews.ie/bnbusiness'
 webITBusinessNews = 'https://www.irishtimes.com/business/companies'
 rssExaminerNews = 'https://feeds.feedburner.com/iebusiness'
 
+
 def checkTableExists(dbcon, tablename):
     dbcur = dbcon.cursor()
     dbcur.execute("""
@@ -63,7 +64,6 @@ valGN = ("x", "Google News", rssGoogleNews)
 valSR = ("x", "Silicon Republic", rssSiliconRepublicNews)
 valHN = ("x", "Hacker News", rssHackerNews)
 valTE = ("x", "The Examiner", rssExaminerNews)
-
 
 
 mycursor.execute(sql, valRTE)

@@ -1,29 +1,32 @@
-2019-07-03 22:39:59,937:INFO:---135 Contacts received from table tbl_contacts
-2019-07-03 22:39:59,937:INFO:---News Sites fetched from table - news_scraping_sites
-2019-07-03 22:39:59,941:DEBUG:---Starting new HTTPS connection (1): www.rte.ie:443
-2019-07-03 22:40:00,168:DEBUG:---https://www.rte.ie:443 "GET /feeds/rss/?index=/news/business/ HTTP/1.1" 200 25554
-2019-07-03 22:40:00,183:INFO:---Data Received from: https://www.rte.ie/feeds/rss/?index=/news/business/
-2019-07-03 22:40:00,292:DEBUG:---Starting new HTTPS connection (1): www.irishtimes.com:443
-2019-07-03 22:40:00,412:DEBUG:---https://www.irishtimes.com:443 "GET /cmlink/news-1.1319192 HTTP/1.1" 200 3152
-2019-07-03 22:40:00,419:INFO:---Data Received from: https://www.irishtimes.com/cmlink/news-1.1319192
-2019-07-03 22:40:00,484:DEBUG:---Starting new HTTPS connection (1): www.irishtimes.com:443
-2019-07-03 22:40:00,589:DEBUG:---https://www.irishtimes.com:443 "GET /rss/activecampaign-business-today-digest-more-from-business-1.3180340 HTTP/1.1" 200 1815
-2019-07-03 22:40:00,604:INFO:---Data Received from: https://www.irishtimes.com/rss/activecampaign-business-today-digest-more-from-business-1.3180340
-2019-07-03 22:40:00,667:DEBUG:---Starting new HTTPS connection (1): www.independent.ie:443
-2019-07-03 22:40:00,824:DEBUG:---https://www.independent.ie:443 "GET /business/irish/rss/ HTTP/1.1" 200 18741
-2019-07-03 22:40:00,899:INFO:---Data Received from: https://www.independent.ie/business/irish/rss/
-2019-07-03 22:40:01,183:DEBUG:---Starting new HTTPS connection (1): feeds.breakingnews.ie:443
-2019-07-03 22:40:01,419:DEBUG:---https://feeds.breakingnews.ie:443 "GET /bnbusiness HTTP/1.1" 200 None
-2019-07-03 22:40:01,431:INFO:---Data Received from: https://feeds.breakingnews.ie/bnbusiness
-2019-07-03 22:40:01,487:DEBUG:---Starting new HTTPS connection (1): thejournal.com:443
-2019-07-03 22:40:02,553:DEBUG:---https://thejournal.com:443 "GET /rss-feeds/all-articles.aspx HTTP/1.1" 200 29939
-2019-07-03 22:40:02,588:INFO:---Data Received from: https://thejournal.com/rss-feeds/all-articles.aspx
-2019-07-03 22:40:02,740:DEBUG:---Starting new HTTPS connection (1): www.siliconrepublic.com:443
-2019-07-03 22:40:02,817:DEBUG:---https://www.siliconrepublic.com:443 "GET /feed HTTP/1.1" 200 17808
-2019-07-03 22:40:02,841:INFO:---Data Received from: https://www.siliconrepublic.com/feed
-2019-07-03 22:40:02,893:DEBUG:---Starting new HTTPS connection (1): news.ycombinator.com:443
-2019-07-03 22:40:03,610:DEBUG:---https://news.ycombinator.com:443 "GET /rss HTTP/1.1" 200 None
-2019-07-03 22:40:03,626:INFO:---Data Received from: https://news.ycombinator.com/rss
-2019-07-03 22:40:03,734:DEBUG:---Starting new HTTPS connection (1): news.google.com:443
-2019-07-03 22:40:03,842:DEBUG:---https://news.google.com:443 "GET /rss?hl=en-IE&gl=IE&ceid=IE:en HTTP/1.1" 200 23673
-2019-07-03 22:40:03,892:INFO:---Data Received from: https://news.google.com/rss?hl=en-IE&gl=IE&ceid=IE:en
+2019-07-04 19:52:37,134:INFO:---135 Contacts received from table tbl_contacts
+2019-07-04 19:52:37,135:INFO:---News Sites fetched from table - news_scraping_sites
+2019-07-04 19:52:37,139:DEBUG:---Starting new HTTPS connection (1): www.rte.ie:443
+2019-07-04 19:52:37,213:DEBUG:---https://www.rte.ie:443 "GET /feeds/rss/?index=/news/business/ HTTP/1.1" 200 25277
+2019-07-04 19:52:37,224:INFO:---Data Received from: https://www.rte.ie/feeds/rss/?index=/news/business/
+2019-07-04 19:52:37,323:DEBUG:---Starting new HTTPS connection (1): www.irishtimes.com:443
+2019-07-04 19:52:37,432:DEBUG:---https://www.irishtimes.com:443 "GET /cmlink/news-1.1319192 HTTP/1.1" 200 3223
+2019-07-04 19:52:37,457:INFO:---Data Received from: https://www.irishtimes.com/cmlink/news-1.1319192
+2019-07-04 19:52:37,541:DEBUG:---Starting new HTTPS connection (1): www.irishtimes.com:443
+2019-07-04 19:52:37,647:DEBUG:---https://www.irishtimes.com:443 "GET /rss/activecampaign-business-today-digest-more-from-business-1.3180340 HTTP/1.1" 200 1597
+2019-07-04 19:52:37,657:INFO:---Data Received from: https://www.irishtimes.com/rss/activecampaign-business-today-digest-more-from-business-1.3180340
+2019-07-04 19:52:37,693:DEBUG:---Starting new HTTPS connection (1): www.independent.ie:443
+2019-07-04 19:52:37,832:DEBUG:---https://www.independent.ie:443 "GET /business/irish/rss/ HTTP/1.1" 200 19119
+2019-07-04 19:52:37,875:INFO:---Data Received from: https://www.independent.ie/business/irish/rss/
+2019-07-04 19:52:38,144:DEBUG:---Starting new HTTPS connection (1): feeds.breakingnews.ie:443
+2019-07-04 19:52:38,255:DEBUG:---https://feeds.breakingnews.ie:443 "GET /bnbusiness HTTP/1.1" 200 None
+2019-07-04 19:52:38,275:INFO:---Data Received from: https://feeds.breakingnews.ie/bnbusiness
+2019-07-04 19:52:38,328:DEBUG:---Starting new HTTPS connection (1): thejournal.com:443
+2019-07-04 19:52:39,356:DEBUG:---https://thejournal.com:443 "GET /rss-feeds/all-articles.aspx HTTP/1.1" 200 29939
+2019-07-04 19:52:39,370:INFO:---Data Received from: https://thejournal.com/rss-feeds/all-articles.aspx
+2019-07-04 19:52:39,502:DEBUG:---Starting new HTTPS connection (1): www.siliconrepublic.com:443
+2019-07-04 19:52:39,587:DEBUG:---https://www.siliconrepublic.com:443 "GET /feed HTTP/1.1" 200 19534
+2019-07-04 19:52:39,616:INFO:---Data Received from: https://www.siliconrepublic.com/feed
+2019-07-04 19:52:39,674:DEBUG:---Starting new HTTPS connection (1): news.ycombinator.com:443
+2019-07-04 19:52:40,386:DEBUG:---https://news.ycombinator.com:443 "GET /rss HTTP/1.1" 200 None
+2019-07-04 19:52:40,392:INFO:---Data Received from: https://news.ycombinator.com/rss
+2019-07-04 19:52:40,476:DEBUG:---Starting new HTTPS connection (1): news.google.com:443
+2019-07-04 19:52:40,570:DEBUG:---https://news.google.com:443 "GET /rss?hl=en-IE&gl=IE&ceid=IE:en HTTP/1.1" 200 25589
+2019-07-04 19:52:40,630:INFO:---Data Received from: https://news.google.com/rss?hl=en-IE&gl=IE&ceid=IE:en
+2019-07-04 19:52:40,751:DEBUG:---Starting new HTTPS connection (1): feeds.feedburner.com:443
+2019-07-04 19:52:40,947:DEBUG:---https://feeds.feedburner.com:443 "GET /iebusiness HTTP/1.1" 200 None
+2019-07-04 19:52:40,965:INFO:---Data Received from: https://feeds.feedburner.com/iebusiness
