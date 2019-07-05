@@ -7,11 +7,8 @@ from fuzzywuzzy import fuzz, process
 import logging
 import csv
 import operator
-import sys
 
-print("This is the name of the script: ", sys.argv[0])
-print("Number of arguments: ", len(sys.argv))
-print("The arguments are: ", str(sys.argv))
+
 
 
 logger = logging.getLogger(__name__)
@@ -36,8 +33,14 @@ mycursor = mydb.cursor()
 
 def getXMLNews(urlLink):
     """ In getXMS News - this takes the url link and returns the page as an object """
-
-    req = requests.get(urlLink)
+    
+    try:
+        req = requests.get(urlLink)
+    except Exception as e:
+        # print("******************** Error Occurred")
+        logger.error('No data received from: {}'.format(e))
+        return None
+    
     if req.status_code == 200:
         soup = BeautifulSoup(req.text, 'html.parser')
         logger.info('Data Received from: {}'.format(urlLink))
@@ -50,11 +53,13 @@ def getXMLNews(urlLink):
 def fetchNewsSites():
     """Fetch the news sites from MYSQL news_scraping_sites table"""
 
+    # input("This is a stop . . .")
     getNewsStatement = " \
     SELECT news_scraping_sites.use_in_search, news_scraping_sites.site_name, news_scraping_sites.site_address from news_scraping_sites"
     mycursor.execute(getNewsStatement)
 
     newsSitesQueryData = mycursor.fetchall()
+    
     logger.info('News Sites fetched from table - news_scraping_sites')
     return newsSitesQueryData
 
@@ -97,6 +102,7 @@ def cleaned(currentContact):
 
 
 def writeMatchToCSV(fieldList):
+    """Match found - write this to the csv temporary storing file"""
 
     # Open the csv file and check to see if the match is already in the file
     with open('linkstempfile.txt') as read_file:
@@ -161,12 +167,6 @@ def parseMatchData(contact, newsItem, matchScore, newsProvider):
             newsMediaThumbnailLink = ""
         newsLink = newsItem.find('link')["href"]
 
-    # print("Title: " + newsTitle)
-    # print("Link:  " + newsLink)
-    # print("Pic:   " + newsMediaThumbnailLink)
-    # print("Date:  " + newsPublishDate)
-    # print("")
-
     fieldNames = [newsProvider, contact[0], matchScore, newsTitle,
                   newsLink, newsMediaThumbnailLink, newsPublishDate]
 
@@ -182,48 +182,60 @@ def matchNewsItems(newsProvider, newsList, contactList):
     else:
         headerTag = "item"
 
-    for item in newsList.findAll(headerTag):
+    try:
+        
+        for item in newsList.findAll(headerTag):
 
-        newsHeader = item.title.get_text()
-        # print(newsHeader)
-        for contact in contactList:
+            newsHeader = item.title.get_text()
+            # print(newsHeader)
+            for contact in contactList:
 
-            # In some cases Contact equals None
-            if contact[0] == None:
-                continue
+                # In some cases Contact equals None
+                if contact[0] == None:
+                    continue
 
-            # Field needs to be converted to string from tuple
-            contactInLoop = contact[0]
+                # Field needs to be converted to string from tuple
+                contactInLoop = contact[0]
 
-            # fuzzMatch = fuzz.partial_ratio(newsHeader, cleaned(contactInLoop))
+                # fuzzMatch = fuzz.partial_ratio(newsHeader, cleaned(contactInLoop))
 
-            fuzzMatch = fuzz.token_set_ratio(
-                newsHeader, cleaned(contactInLoop))
+                fuzzMatch = fuzz.token_set_ratio(
+                    newsHeader, cleaned(contactInLoop))
 
-            # Determine score of relevance
-            if fuzzMatch > 70 and cleaned(contactInLoop) != 'None':
-                parseMatchData(contact, item, fuzzMatch, newsProvider)
-
+                # Determine score of relevance
+                if fuzzMatch > 70 and cleaned(contactInLoop) != 'None':
+                    parseMatchData(contact, item, fuzzMatch, newsProvider)
+    except Exception as e:
+        # print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   Error")
+        logger.error('No data received from: {}'.format(e))
 
 def writeTopNewsItem(newsItem, listNews):
     """Write the top news item is the News Site to the temp file"""
-    # print("newsItem", newsItem)
-    # print("listNews", listNews.findAll('item')[0])
     newsProvider = newsItem[1]
 
-    if newsProvider == "The Examiner":
-        topNewsItem = listNews.findAll('entry')[0]
-    else:
-        topNewsItem = listNews.findAll('item')[0]
+    try:
+        
+        # The Examiner is special in that it is the only site that uses "entry" as a news tag
+        if newsProvider == "The Examiner":
+            topNewsItem = listNews.findAll('entry')[0]
+        else:
+            topNewsItem = listNews.findAll('item')[0]
 
-    parseMatchData("Top News", topNewsItem, "Top", newsProvider)
-    # print(newsItem)
+        parseMatchData("Top News", topNewsItem, "Top", newsProvider)
+        # print(newsItem)
 
-    # input("Press Eeenter . . . .")
+        # input("Press Eeenter . . . .")
+    except Exception as e:
+        
+        logger.error('No data received from: {}'.format(e))
 
 
 # Build the News Lists
+
+# Get the contacts data from the Contacts database
 contactsQueryData = fetchContactsData()
+
+# Get the News Sites from the database
 newsSitesData = fetchNewsSites()
 mydb.close()
 
