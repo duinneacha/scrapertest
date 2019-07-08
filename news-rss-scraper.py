@@ -132,8 +132,9 @@ def parseMatchData(contact, newsItem, matchScore, newsProvider):
     else:
         newsPublishDate = newsItem.pubdate.get_text()
 
-    if (newsProvider == "Independent.ie") or (newsProvider == "BreakingNews.ie") or (newsProvider == "TheJournal.ie") or (newsProvider == "Hacker News"):
-
+    # if (newsProvider == "Independent.ie") or (newsProvider == "BreakingNews.ie") or (newsProvider == "TheJournal.ie") or (newsProvider == "Hacker News") or (newsProvider == "Tech Crunch"):
+    if newsProvider in ("Independent.ie", "BreakingNews.ie", "TheJournal.ie", "Hacker News", "Tech Crunch"):
+        
         newsLink = newsItem.find('link').next_element.strip()
 
         try:
@@ -145,7 +146,8 @@ def parseMatchData(contact, newsItem, matchScore, newsProvider):
         newsLink = newsItem.guid.get_text()
 
         newsMediaThumbnailLink = newsItem.find("media:content")["url"]
-    elif (newsProvider == "IT Business") or (newsProvider == "Irish Times"):
+    elif newsProvider in ("IT Business", "Irish Times"):
+        
         newsLink = newsItem.find('link').next_element.strip()
         try:
             newsMediaThumbnailLink = newsItem.find("enclosure")["url"]
@@ -239,7 +241,7 @@ contactsQueryData = fetchContactsData()
 newsSitesData = fetchNewsSites()
 mydb.close()
 
-extraList = [("Nimbus", 0), ("CIT", 0)]
+extraList = [("Nimbus", 0), ("CIT", 0), ("Soldo", 0)]
 
 # Loop through the news sites and get Top news item and any news items that are associated with the names in the contacts table
 for index, newsList in enumerate(newsSitesData, start=1):

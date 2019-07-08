@@ -21,6 +21,7 @@ rssBreakingNewsTop = 'https://feeds.breakingnews.ie/bntopstories'
 rssBreakingNewsBusiness = 'https://feeds.breakingnews.ie/bnbusiness'
 webITBusinessNews = 'https://www.irishtimes.com/business/companies'
 rssExaminerNews = 'https://feeds.feedburner.com/iebusiness'
+rssTechCrunch = 'http://feeds.feedburner.com/TechCrunch/'
 
 
 def checkTableExists(dbcon, tablename):
@@ -64,7 +65,7 @@ valGN = ("x", "Google News", rssGoogleNews)
 valSR = ("x", "Silicon Republic", rssSiliconRepublicNews)
 valHN = ("x", "Hacker News", rssHackerNews)
 valTE = ("x", "The Examiner", rssExaminerNews)
-
+valTC = ('x', "Tech Crunch", rssTechCrunch)
 
 mycursor.execute(sql, valRTE)
 mycursor.execute(sql, valIT)
@@ -76,6 +77,7 @@ mycursor.execute(sql, valSR)
 mycursor.execute(sql, valHN)
 mycursor.execute(sql, valGN)
 mycursor.execute(sql, valTE)
+mycursor.execute(sql, valTC)
 print("Adding News Sites")
 
 
